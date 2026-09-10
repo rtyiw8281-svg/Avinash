@@ -1,0 +1,815 @@
+/* Reset & Viewport setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    touch-action: none;
+    position: fixed;
+}
+
+#gameCanvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    touch-action: none;
+}
+
+/* UI Overlays */
+.screen-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.screen-layer.hidden {
+    display: none !important;
+}
+
+/* Common Interactive Controls */
+button, .btn {
+    pointer-events: auto;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    outline: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: transform 0.08s ease, filter 0.08s ease;
+    touch-action: manipulation;
+}
+
+button:active, .btn:active {
+    transform: scale(0.96);
+}
+
+.coin-icon {
+    display: inline-block;
+    color: #FBBF24;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* ---------------- HUD LAYER ---------------- */
+.hud-header {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top, 12px));
+    left: max(16px, env(safe-area-inset-left, 16px));
+    right: max(16px, env(safe-area-inset-right, 16px));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    gap: 8px;
+}
+
+.hud-card {
+    pointer-events: auto;
+    background: rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    padding: 8px 14px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Fuel Bar */
+.fuel-card {
+    display: flex;
+    flex-direction: column;
+    width: clamp(130px, 20vw, 180px);
+}
+
+.fuel-card.warning {
+    animation: fuelPulse 0.5s infinite alternate;
+    border-color: #EF4444;
+}
+
+@keyframes fuelPulse {
+    from { box-shadow: 0 0 8px #EF4444; background: rgba(153, 27, 27, 0.85); }
+    to { box-shadow: 0 0 24px #DC2626; background: rgba(220, 38, 38, 0.95); }
+}
+
+.fuel-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #F87171;
+    margin-bottom: 4px;
+}
+
+.fuel-bar-track {
+    width: 100%;
+    height: 12px;
+    background: #1F2937;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fuel-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #EF4444, #F59E0B 45%, #10B981);
+    border-radius: 5px;
+    transition: width 0.12s linear;
+}
+
+/* Distance Pill */
+.distance-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: clamp(100px, 16vw, 140px);
+    padding: 6px 14px;
+}
+
+.distance-val {
+    font-size: clamp(22px, 3.8vw, 30px);
+    font-weight: 900;
+    color: #38BDF8;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.distance-best {
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Right HUD */
+.hud-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.coins-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: clamp(15px, 2.5vw, 19px);
+    font-weight: 900;
+    color: #FBBF24;
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-pause {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #334155;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Realistic Tactile Pedals */
+.pedals-container {
+    position: absolute;
+    bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    left: max(16px, env(safe-area-inset-left, 16px));
+    right: max(16px, env(safe-area-inset-right, 16px));
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.pedal-btn {
+    pointer-events: auto;
+    width: clamp(105px, 18vw, 145px);
+    height: clamp(88px, 15vw, 120px);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.55), 0 16px 24px rgba(0,0,0,0.45);
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Pedal anti-slip metal ridges */
+.pedal-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.08) 0px,
+        rgba(255, 255, 255, 0.08) 3px,
+        transparent 3px,
+        transparent 10px
+    );
+    pointer-events: none;
+}
+
+.pedal-brake {
+    background: linear-gradient(180deg, #DC2626, #991B1B);
+}
+
+.pedal-gas {
+    background: linear-gradient(180deg, #10B981, #047857);
+}
+
+.pedal-btn .pedal-title {
+    font-size: clamp(18px, 3vw, 24px);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    z-index: 2;
+}
+
+.pedal-btn .pedal-sub {
+    font-size: 10.5px;
+    opacity: 0.9;
+    margin-top: 2px;
+    z-index: 2;
+}
+
+.pedal-btn.pressed, .pedal-btn:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.55), 0 6px 12px rgba(0,0,0,0.35);
+    filter: brightness(1.15);
+}
+
+/* ---------------- MAIN MENU ---------------- */
+.menu-container {
+    pointer-events: auto;
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.72) 0%, rgba(3, 7, 18, 0.94) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.menu-title-block {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.menu-title {
+    font-size: clamp(34px, 6.5vw, 60px);
+    font-weight: 900;
+    color: #FBBF24;
+    text-shadow: 0 4px 0 #B45309, 0 8px 18px rgba(0,0,0,0.75);
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.menu-subtitle {
+    font-size: 13px;
+    color: #94A3B8;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-top: 6px;
+}
+
+.menu-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-chip {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 7px 14px;
+    border-radius: 12px;
+    color: #E2E8F0;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.stat-chip strong {
+    color: #38BDF8;
+    font-size: 15px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(340px, 92vw);
+}
+
+.btn-primary-play {
+    background: linear-gradient(180deg, #F59E0B, #D97706);
+    color: #FFFFFF;
+    font-size: 24px;
+    padding: 15px 24px;
+    border-radius: 18px;
+    box-shadow: 0 6px 0 #92400E, 0 12px 20px rgba(0,0,0,0.5);
+    border: 2px solid #FDE68A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary-play:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #92400E;
+}
+
+.menu-secondary-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-menu-sec {
+    flex: 1;
+    background: #1E293B;
+    color: #E2E8F0;
+    font-size: 13px;
+    padding: 12px 6px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 0 #0F172A;
+    white-space: nowrap;
+}
+
+/* ---------------- MODALS (GARAGE, LEVELS, SETTINGS) ---------------- */
+.modal-overlay {
+    pointer-events: auto;
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    z-index: 50;
+}
+
+.modal-dialog {
+    background: #0F172A;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    width: min(640px, 95vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.75);
+    color: #F8FAFC;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: #1E293B;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.btn-close {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 16px 18px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Garage Items */
+.garage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.upgrade-card {
+    background: #1E293B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.upgrade-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.upgrade-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #F1F5F9;
+}
+
+.upgrade-desc {
+    font-size: 12px;
+    color: #94A3B8;
+    line-height: 1.3;
+}
+
+.pips-row {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.pip {
+    flex: 1;
+    height: 10px;
+    background: #334155;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.pip.active {
+    background: #10B981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.btn-upgrade {
+    background: linear-gradient(180deg, #10B981, #059669);
+    color: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 3px 0 #047857;
+    margin-top: 4px;
+}
+
+.btn-upgrade.maxed {
+    background: #475569;
+    box-shadow: none;
+    color: #CBD5E1;
+    cursor: default;
+}
+
+.btn-upgrade:disabled:not(.maxed) {
+    background: #334155;
+    box-shadow: none;
+    color: #64748B;
+    cursor: not-allowed;
+}
+
+/* Levels Cards */
+.levels-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.level-card {
+    background: #1E293B;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.level-card.selected {
+    border-color: #38BDF8;
+    background: #1E3A8A;
+}
+
+.level-icon {
+    font-size: 32px;
+}
+
+.level-info {
+    flex: 1;
+}
+
+.level-info h3 {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.level-info p {
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+.level-record {
+    font-size: 12px;
+    color: #38BDF8;
+    margin-top: 4px;
+}
+
+.badge-selected {
+    background: #38BDF8;
+    color: #0F172A;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.btn-level-select {
+    background: #3B82F6;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.unlock-reqs {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 11px;
+    color: #94A3B8;
+}
+
+.btn-unlock-level {
+    background: #F59E0B;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+/* Settings */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1E293B;
+    padding: 14px 18px;
+    border-radius: 14px;
+}
+
+.btn-toggle {
+    background: #10B981;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.btn-toggle.off {
+    background: #EF4444;
+}
+
+.btn-danger {
+    background: #DC2626;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.controls-help {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    color: #CBD5E1;
+    line-height: 1.5;
+}
+
+/* Game Over Dialog */
+.gameover-dialog {
+    text-align: center;
+    width: min(420px, 92vw);
+    padding: 22px;
+}
+
+.go-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #EF4444;
+    text-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+}
+
+.go-record-badge {
+    display: inline-block;
+    background: #F59E0B;
+    color: #000;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin: 8px 0;
+}
+
+.go-stats-box {
+    background: #1E293B;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.go-stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: #94A3B8;
+}
+
+.go-stat-row strong {
+    color: #F8FAFC;
+    font-size: 18px;
+}
+
+.go-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Pause Dialog */
+.pause-dialog {
+    text-align: center;
+    width: min(340px, 90vw);
+    padding: 22px;
+}
+
+.pause-title {
+    font-size: 26px;
+    font-weight: 900;
+    margin-bottom: 18px;
+}
+
+.pause-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Landscape Mobile (16:9, 18:9, 19.5:9, 20:9 screens) */
+@media (max-height: 520px) {
+    .pedal-btn {
+        width: clamp(95px, 16vw, 125px);
+        height: clamp(75px, 18vw, 95px);
+        border-radius: 20px;
+    }
+    .hud-header {
+        top: max(8px, env(safe-area-inset-top, 8px));
+        left: max(10px, env(safe-area-inset-left, 10px));
+        right: max(10px, env(safe-area-inset-right, 10px));
+    }
+    .hud-card {
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+    .distance-val {
+        font-size: 20px;
+    }
+    .pedals-container {
+        bottom: max(10px, env(safe-area-inset-bottom, 10px));
+        left: max(10px, env(safe-area-inset-left, 10px));
+        right: max(10px, env(safe-area-inset-right, 10px));
+    }
+    .menu-title {
+        font-size: clamp(26px, 6vw, 42px);
+    }
+    .menu-stats-row {
+        margin-bottom: 14px;
+    }
+    .modal-dialog {
+        max-height: 96vh;
+    }
+}
+
+/* Portrait Mobile & Small Screen Orientation */
+@media (orientation: portrait), (max-aspect-ratio: 1/1) {
+    .hud-header {
+        top: max(12px, env(safe-area-inset-top, 12px));
+        left: max(12px, env(safe-area-inset-left, 12px));
+        right: max(12px, env(safe-area-inset-right, 12px));
+        gap: 6px;
+    }
+    .hud-card {
+        padding: 5px 8px;
+    }
+    .fuel-card {
+        width: clamp(90px, 26vw, 130px);
+    }
+    .distance-pill {
+        min-width: clamp(80px, 22vw, 110px);
+    }
+    .distance-val {
+        font-size: 18px;
+    }
+    .coins-pill {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+    .pedals-container {
+        bottom: max(16px, env(safe-area-inset-bottom, 16px));
+        left: max(14px, env(safe-area-inset-left, 14px));
+        right: max(14px, env(safe-area-inset-right, 14px));
+    }
+    .pedal-btn {
+        width: clamp(120px, 42vw, 175px);
+        height: clamp(85px, 12vh, 120px);
+        border-radius: 22px;
+    }
+    .pedal-main {
+        font-size: 16px;
+    }
+    .pedal-sub {
+        font-size: 10px;
+    }
+    .garage-grid {
+        grid-template-columns: 1fr;
+    }
+    .modal-dialog {
+        width: min(420px, 94vw);
+        max-height: 88vh;
+    }
+    .menu-container {
+        width: min(440px, 92vw);
+        padding: 24px 16px;
+    }
+    .menu-title {
+        font-size: clamp(28px, 8vw, 42px);
+    }
+    .menu-subtitle {
+        font-size: 11px;
+    }
+    .menu-stats-row {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .menu-secondary-row {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+    .btn-menu-sec {
+        width: 100%;
+    }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Hill Climber",
+  "description": "A 2D physics-based hill climbing driving game featuring vehicle upgrades, multiple environments, stunts, and fluid physics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

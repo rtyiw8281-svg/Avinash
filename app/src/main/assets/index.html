@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hill Climber</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 2D Physics & Gameplay Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- In-Game Heads Up Display (HUD) -->
+    <div id="screenHUD" class="screen-layer hidden">
+        <div class="hud-header">
+            <!-- Top Left: Fuel Bar -->
+            <div id="hudFuelCard" class="hud-card fuel-card">
+                <div class="fuel-label">
+                    <span>⛽ FUEL</span>
+                </div>
+                <div class="fuel-bar-track">
+                    <div id="hudFuelFill" class="fuel-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Top Center: Distance -->
+            <div class="hud-card distance-pill">
+                <div id="hudDistance" class="distance-val">0m</div>
+                <div class="distance-best">RECORD: <span id="hudBest">0m</span></div>
+            </div>
+
+            <!-- Top Right: Coins & Pause -->
+            <div class="hud-right">
+                <div class="hud-card coins-pill">
+                    <span class="coin-icon">★</span>
+                    <span id="hudCoins">0</span>
+                </div>
+                <button id="btnPause" class="btn-pause" aria-label="Pause">❚❚</button>
+            </div>
+        </div>
+
+        <!-- Touch Pedals -->
+        <div class="pedals-container">
+            <button id="btnBrake" class="pedal-btn pedal-brake" aria-label="Brake and Reverse">
+                <span class="pedal-title">BRAKE</span>
+                <span class="pedal-sub">◀ REVERSE</span>
+            </button>
+            <button id="btnGas" class="pedal-btn pedal-gas" aria-label="Accelerate and Gas">
+                <span class="pedal-title">GAS</span>
+                <span class="pedal-sub">THROTTLE ▶</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Menu Screen -->
+    <div id="screenMenu" class="screen-layer">
+        <div class="menu-container">
+            <div class="menu-title-block">
+                <h1 class="menu-title">HILL CLIMBER</h1>
+                <div class="menu-subtitle">2D OFF-ROAD DRIVING ADVENTURE</div>
+            </div>
+
+            <div class="menu-stats-row">
+                <div class="stat-chip">
+                    <span>RECORD:</span>
+                    <strong id="menuBestScore">0m</strong>
+                </div>
+                <div class="stat-chip">
+                    <span class="coin-icon">★</span>
+                    <strong id="menuCoins">0</strong>
+                </div>
+                <div class="stat-chip">
+                    <span>LEVEL:</span>
+                    <strong id="menuActiveLevel">Green Hills</strong>
+                </div>
+            </div>
+
+            <div class="menu-buttons">
+                <button id="btnPlay" class="btn btn-primary-play">
+                    <span>▶ PLAY</span>
+                </button>
+                <div class="menu-secondary-row">
+                    <button id="btnGarage" class="btn btn-menu-sec">🔧 GARAGE</button>
+                    <button id="btnLevels" class="btn btn-menu-sec">🗺️ LEVELS</button>
+                    <button id="btnSettings" class="btn btn-menu-sec">⚙️ SETTINGS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Garage Modal -->
+    <div id="modalGarage" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2>🔧 VEHICLE GARAGE</h2>
+                <div style="display:flex; align-items:center; gap: 10px;">
+                    <div class="stat-chip" style="padding: 4px 10px;">
+                        <span class="coin-icon">★</span>
+                        <strong id="garageCoins">0</strong>
+                    </div>
+                    <button id="btnCloseGarage" class="btn-close">✕</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="garage-grid">
+                    <!-- Engine -->
+                    <div class="upgrade-card">
+                        <div class="upgrade-top">
+                            <span class="upgrade-title">⚡ ENGINE</span>
+                        </div>
+                        <p class="upgrade-desc">Increases horsepower, hill-climbing torque, and top speed.</p>
+                        <div class="pips-row" id="pips-engine"></div>
+                        <button class="btn btn-upgrade" data-part="engine">UPGRADE</button>
+                    </div>
+
+                    <!-- Tires -->
+                    <div class="upgrade-card">
+                        <div class="upgrade-top">
+                            <span class="upgrade-title">🛞 TIRES</span>
+                        </div>
+                        <p class="upgrade-desc">Improves traction on steep climbs, sand, and ice.</p>
+                        <div class="pips-row" id="pips-tires"></div>
+                        <button class="btn btn-upgrade" data-part="tires">UPGRADE</button>
+                    </div>
+
+                    <!-- Suspension -->
+                    <div class="upgrade-card">
+                        <div class="upgrade-top">
+                            <span class="upgrade-title">🔩 SUSPENSION</span>
+                        </div>
+                        <p class="upgrade-desc">Absorbs heavy impacts, stabilizes landings, and prevents rollovers.</p>
+                        <div class="pips-row" id="pips-suspension"></div>
+                        <button class="btn btn-upgrade" data-part="suspension">UPGRADE</button>
+                    </div>
+
+                    <!-- Fuel Tank -->
+                    <div class="upgrade-card">
+                        <div class="upgrade-top">
+                            <span class="upgrade-title">⛽ FUEL TANK</span>
+                        </div>
+                        <p class="upgrade-desc">Increases total fuel capacity and engine fuel economy.</p>
+                        <div class="pips-row" id="pips-fuel"></div>
+                        <button class="btn btn-upgrade" data-part="fuel">UPGRADE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Levels Modal -->
+    <div id="modalLevels" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2>🗺️ SELECT ENVIRONMENT</h2>
+                <button id="btnCloseLevels" class="btn-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="levelsContainer" class="levels-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="modalSettings" class="modal-overlay hidden">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2>⚙️ SETTINGS</h2>
+                <button id="btnCloseSettings" class="btn-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <span>🔊 Sound Effects & Engine</span>
+                        <button id="btnToggleSound" class="btn btn-toggle">
+                            <span id="soundStateLabel">ON</span>
+                        </button>
+                    </div>
+                    <div class="controls-help">
+                        <h4 style="margin-bottom:6px; color:#38BDF8;">🎮 CONTROLS:</h4>
+                        <p><strong>Touchscreen:</strong> Left pedal = BRAKE / REVERSE. Right pedal = GAS / ACCELERATE.</p>
+                        <p style="margin-top:4px;"><strong>Keyboard:</strong> [D] / [Right Arrow] = Gas. [A] / [Left Arrow] / [Space] = Brake. [P] / [Esc] = Pause.</p>
+                        <p style="margin-top:4px;"><strong>In the Air:</strong> Gas tilts nose up. Brake tilts nose down. Complete 360° flips for massive bonus coins!</p>
+                    </div>
+                    <div class="settings-item">
+                        <span>🗑️ Reset All Progress</span>
+                        <button id="btnResetData" class="btn btn-danger">RESET</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pause Modal -->
+    <div id="modalPause" class="modal-overlay hidden">
+        <div class="modal-dialog pause-dialog">
+            <h2 class="pause-title">GAME PAUSED</h2>
+            <div class="pause-buttons">
+                <button id="btnResume" class="btn btn-primary-play" style="font-size:20px; padding:12px;">▶ RESUME</button>
+                <button id="btnPauseRestart" class="btn btn-menu-sec">🔄 RESTART</button>
+                <button id="btnPauseGarage" class="btn btn-menu-sec">🔧 GARAGE</button>
+                <button id="btnPauseMenu" class="btn btn-menu-sec">🏠 MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="modalGameOver" class="modal-overlay hidden">
+        <div class="modal-dialog gameover-dialog">
+            <h2 id="gameOverTitle" class="go-title">GAME OVER</h2>
+            <div id="goRecordBadge" class="go-record-badge hidden">🏆 NEW BEST RECORD!</div>
+
+            <div class="go-stats-box">
+                <div class="go-stat-row">
+                    <span>Distance:</span>
+                    <strong id="goDistance">0m</strong>
+                </div>
+                <div class="go-stat-row">
+                    <span>Coins Collected:</span>
+                    <strong id="goCoins" style="color:#FBBF24;">+0</strong>
+                </div>
+                <div class="go-stat-row">
+                    <span>Total Coins:</span>
+                    <strong id="goTotalCoins">0</strong>
+                </div>
+            </div>
+
+            <div class="go-actions">
+                <button id="btnGameOverRetry" class="btn btn-primary-play" style="font-size:20px; padding:14px;">🔄 DRIVE AGAIN</button>
+                <button id="btnGameOverGarage" class="btn btn-menu-sec">🔧 UPGRADE IN GARAGE</button>
+                <button id="btnGameOverMenu" class="btn btn-menu-sec">🏠 MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="physics.js"></script>
+    <script src="render.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

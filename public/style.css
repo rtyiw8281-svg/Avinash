@@ -1,0 +1,700 @@
+/* Reset & Viewport setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    touch-action: none;
+}
+
+#gameCanvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* UI Overlays */
+.screen-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.screen-layer.hidden {
+    display: none !important;
+}
+
+/* Common Interactive Controls */
+button, .btn {
+    pointer-events: auto;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    outline: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: transform 0.08s ease, filter 0.08s ease;
+}
+
+button:active, .btn:active {
+    transform: scale(0.96);
+}
+
+.coin-icon {
+    display: inline-block;
+    color: #FBBF24;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* ---------------- HUD LAYER ---------------- */
+.hud-header {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+}
+
+.hud-card {
+    pointer-events: auto;
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 8px 14px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Fuel Bar */
+.fuel-card {
+    display: flex;
+    flex-direction: column;
+    width: 170px;
+}
+
+.fuel-card.warning {
+    animation: fuelPulse 0.6s infinite alternate;
+    border-color: #EF4444;
+}
+
+@keyframes fuelPulse {
+    from { box-shadow: 0 0 8px #EF4444; }
+    to { box-shadow: 0 0 22px #DC2626; }
+}
+
+.fuel-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #F87171;
+    margin-bottom: 4px;
+}
+
+.fuel-bar-track {
+    width: 100%;
+    height: 12px;
+    background: #1F2937;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fuel-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #EF4444, #F59E0B, #10B981);
+    border-radius: 5px;
+    transition: width 0.12s linear;
+}
+
+/* Distance Pill */
+.distance-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+    padding: 6px 18px;
+}
+
+.distance-val {
+    font-size: 26px;
+    font-weight: 900;
+    color: #38BDF8;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    line-height: 1.1;
+}
+
+.distance-best {
+    font-size: 11px;
+    color: #9CA3AF;
+    font-weight: 700;
+}
+
+/* Right HUD */
+.hud-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.coins-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 900;
+    color: #FBBF24;
+}
+
+.btn-pause {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #374151;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Pedals */
+.pedals-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.pedal-btn {
+    pointer-events: auto;
+    width: 125px;
+    height: 105px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 900;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 0 rgba(0, 0, 0, 0.45), 0 14px 20px rgba(0,0,0,0.4);
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    border: 3px solid rgba(255, 255, 255, 0.35);
+}
+
+.pedal-brake {
+    background: linear-gradient(180deg, #EF4444, #B91C1C);
+}
+
+.pedal-gas {
+    background: linear-gradient(180deg, #10B981, #047857);
+}
+
+.pedal-btn .pedal-title {
+    font-size: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.pedal-btn .pedal-sub {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.pedal-btn.pressed, .pedal-btn:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.45), 0 6px 12px rgba(0,0,0,0.3);
+}
+
+/* ---------------- MAIN MENU ---------------- */
+.menu-container {
+    pointer-events: auto;
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(15, 23, 42, 0.7) 0%, rgba(3, 7, 18, 0.92) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.menu-title-block {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.menu-title {
+    font-size: clamp(34px, 7vw, 62px);
+    font-weight: 900;
+    color: #FBBF24;
+    text-shadow: 0 4px 0 #B45309, 0 8px 18px rgba(0,0,0,0.7);
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.menu-subtitle {
+    font-size: 14px;
+    color: #94A3B8;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-top: 6px;
+}
+
+.menu-stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.stat-chip {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 12px;
+    color: #E2E8F0;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-chip strong {
+    color: #38BDF8;
+    font-size: 15px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: min(340px, 90vw);
+}
+
+.btn-primary-play {
+    background: linear-gradient(180deg, #F59E0B, #D97706);
+    color: #FFFFFF;
+    font-size: 26px;
+    padding: 16px 24px;
+    border-radius: 18px;
+    box-shadow: 0 6px 0 #92400E, 0 12px 20px rgba(0,0,0,0.5);
+    border: 2px solid #FDE68A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary-play:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #92400E;
+}
+
+.menu-secondary-row {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-menu-sec {
+    flex: 1;
+    background: #1E293B;
+    color: #E2E8F0;
+    font-size: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 0 #0F172A;
+}
+
+/* ---------------- MODALS (GARAGE, LEVELS, SETTINGS) ---------------- */
+.modal-overlay {
+    pointer-events: auto;
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 50;
+}
+
+.modal-dialog {
+    background: #0F172A;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    width: min(640px, 94vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    color: #F8FAFC;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #1E293B;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.btn-close {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body {
+    padding: 18px 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Garage Items */
+.garage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.upgrade-card {
+    background: #1E293B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.upgrade-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.upgrade-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #F1F5F9;
+}
+
+.upgrade-desc {
+    font-size: 12px;
+    color: #94A3B8;
+    line-height: 1.3;
+}
+
+.pips-row {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.pip {
+    flex: 1;
+    height: 10px;
+    background: #334155;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.pip.active {
+    background: #10B981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.btn-upgrade {
+    background: linear-gradient(180deg, #10B981, #059669);
+    color: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 3px 0 #047857;
+    margin-top: 4px;
+}
+
+.btn-upgrade.maxed {
+    background: #475569;
+    box-shadow: none;
+    color: #CBD5E1;
+    cursor: default;
+}
+
+.btn-upgrade:disabled:not(.maxed) {
+    background: #334155;
+    box-shadow: none;
+    color: #64748B;
+    cursor: not-allowed;
+}
+
+/* Levels Cards */
+.levels-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.level-card {
+    background: #1E293B;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.level-card.selected {
+    border-color: #38BDF8;
+    background: #1E3A8A;
+}
+
+.level-icon {
+    font-size: 32px;
+}
+
+.level-info {
+    flex: 1;
+}
+
+.level-info h3 {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.level-info p {
+    font-size: 12px;
+    color: #94A3B8;
+}
+
+.level-record {
+    font-size: 12px;
+    color: #38BDF8;
+    margin-top: 4px;
+}
+
+.badge-selected {
+    background: #38BDF8;
+    color: #0F172A;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.btn-level-select {
+    background: #3B82F6;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.unlock-reqs {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 11px;
+    color: #94A3B8;
+}
+
+.btn-unlock-level {
+    background: #F59E0B;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+/* Settings */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1E293B;
+    padding: 14px 18px;
+    border-radius: 14px;
+}
+
+.btn-toggle {
+    background: #10B981;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.btn-toggle.off {
+    background: #EF4444;
+}
+
+.btn-danger {
+    background: #DC2626;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.controls-help {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    color: #CBD5E1;
+    line-height: 1.5;
+}
+
+/* Game Over Dialog */
+.gameover-dialog {
+    text-align: center;
+    width: min(420px, 92vw);
+    padding: 24px;
+}
+
+.go-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #EF4444;
+    text-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+}
+
+.go-record-badge {
+    display: inline-block;
+    background: #F59E0B;
+    color: #000;
+    font-weight: 900;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin: 8px 0;
+}
+
+.go-stats-box {
+    background: #1E293B;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.go-stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    color: #94A3B8;
+}
+
+.go-stat-row strong {
+    color: #F8FAFC;
+    font-size: 18px;
+}
+
+.go-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Pause Dialog */
+.pause-dialog {
+    text-align: center;
+    width: min(340px, 90vw);
+    padding: 24px;
+}
+
+.pause-title {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 20px;
+}
+
+.pause-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Responsiveness on small / portrait screens */
+@media (max-height: 480px) {
+    .pedal-btn {
+        width: 105px;
+        height: 85px;
+        border-radius: 18px;
+    }
+    .hud-header {
+        top: 8px;
+        left: 12px;
+        right: 12px;
+    }
+    .pedals-container {
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+    }
+    .modal-dialog {
+        max-height: 94vh;
+    }
+}
